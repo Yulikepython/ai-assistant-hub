@@ -8,7 +8,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import RetrievalQA
 
-from src.config import DocumentConfig  # この行を修正
+from src.config import DocumentConfig
 
 class DocumentProcessor:
     def __init__(self, docs_dir: str, chunk_size: int = 1000, chunk_overlap: int = 200):

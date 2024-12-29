@@ -9,6 +9,7 @@ AI Assistant Hub は LangChain と OpenAI を活用した RAG（Retrieval-Augmen
 - 🔍 RAG（Retrieval-Augmented Generation）による的確な回答生成
 - ⚡ 非同期処理による効率的な応答
 - 🛡️ 包括的な健全性チェックシステム
+- ⚙️ 簡単なカスタマイズ設定
 
 ## システム要件
 
@@ -30,115 +31,135 @@ python -m venv venv
 source venv/bin/activate  # Windows: .\venv\Scripts\activate
 ```
 
-3. 依存パッケージのインストール:
+3. パッケージのインストール:
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt  # 依存パッケージのインストール
+pip install -e .  # 開発モードでプロジェクトをインストール
 ```
 
 4. 環境変数の設定:
-src内の `.env.sample`をコピーして、`.env` ファイルを作成。以下の変数に正しい値を入れます。:
+`.env.sample` をコピーして `.env` ファイルを作成し、以下の変数を設定:
 ```env
 OPENAI_API_KEY=your_api_key_here
 DOCS_PATH=/path/to/your/documents
 ```
 
-## 使用方法
+5. アプリケーション設定の確認:
+`src/user_config.py` で使用するモデルとドキュメントディレクトリを設定できます:
+```python
+from config import OpenAIModel
 
-1. 健全性チェックの実行:
-```bash
-python -m src.health_check
+# 使用するOpenAIのモデル
+MODEL_NAME = OpenAIModel.gpt_4o.value  # または OpenAIModel.o1.value
+
+# RAGで使用するドキュメントディレクトリ名
+DOCS_DIR = "your_docs_directory"  # docs/ 以下に作成されるディレクトリ名
 ```
 
-2. メインアプリケーションの実行:
+## 使用方法
+
+アプリケーションは以下のいずれかの方法で実行できます：
+
+### 方法1: モジュールとして実行
 ```bash
 python -m src.main
 ```
 
-3. 対話の開始:
-- プロンプトが表示されたら、質問を入力してください
-- 終了するには 'q' を入力してください
+### 方法2: コマンドラインツールとして実行（インストール後）
+```bash
+ai-assistant
+```
 
-## 開発者向け情報
+プログラムを起動すると：
+1. 健全性チェックが実行されます
+2. 指定されたドキュメントディレクトリが確認・作成されます
+3. 対話型インターフェースが起動します
+   - 質問を入力してEnterキーを押してください
+   - 終了するには 'q' を入力してください
 
-### プロジェクト構造
+## プロジェクト構造
 
 ```
 ai-assistant-hub/
 ├── src/
-│   ├── __init__.py
-│   ├── .env.sample          # 環境変数のサンプル
-│   ├── .env                 # サンプルから自身で作成してください
-│   ├── main.py              # メインアプリケーション
-│   ├── config.py            # 設定ファイル
-│   ├── health_check.py      # 健全性チェック機能
-│   └── document_processor.py # ドキュメント処理機能
-├── tests/
-│   └── test_ai_assistant.py # テストスイート
-├── docs/                    # 処理対象ドキュメント
-└── requirements.txt         # 依存関係
+│   ├── __init__.py         # バージョン情報
+│   ├── main.py             # メインアプリケーション
+│   ├── config.py           # 基本設定
+│   ├── user_config.py      # ユーザー設定
+│   ├── document_processor.py # ドキュメント処理
+│   └── health_check.py     # 健全性チェック
+├── tests/                  # テストスイート
+├── docs/                   # 処理対象ドキュメント
+├── .env.sample            # 環境変数サンプル
+├── .env                   # 環境変数（作成必要）
+├── requirements.txt       # 依存関係
+├── pyproject.toml        # プロジェクト設定
+└── README.md
 ```
+
+## 開発者向け情報
 
 ### テストの実行
 
-基本的なテスト実行:
 ```bash
-python -m pytest tests/test_ai_assistant.py -v
+# 基本的なテスト実行
+pytest tests/test_ai_assistant.py -v
+
+# カバレッジレポート
+pytest --cov=src tests/test_ai_assistant.py
+
+# 詳細なカバレッジレポート
+pytest --cov=src --cov-report=term-missing tests/test_ai_assistant.py
+
+# HTMLカバレッジレポート
+pytest --cov=src --cov-report=html tests/test_ai_assistant.py
 ```
 
-カバレッジレポートの取得:
-```bash
-# 基本的なカバレッジレポート
-python -m pytest --cov=src tests/test_ai_assistant.py
+### カスタマイズ可能な設定
 
-# 未カバー行を表示する詳細レポート
-python -m pytest --cov=src --cov-report=term-missing tests/test_ai_assistant.py
+1. `src/config.py`：
+   - 基本設定（環境変数、モデル、ドキュメント処理）
+   - 除外パターン
+   - ローダー設定
 
-# HTMLレポートの生成
-python -m pytest --cov=src --cov-report=html tests/test_ai_assistant.py
-```
+2. `src/user_config.py`：
+   - 使用するGPTモデル
+   - ドキュメントディレクトリ
 
-### ドキュメント処理の設定
-
-`config.py` で以下の設定をカスタマイズできます：
-- 対応するファイル形式
-- 除外パターン
-- チャンクサイズとオーバーラップ
-- 並行処理の設定
+3. `src/document_processor.py`：
+   - チャンクサイズ
+   - オーバーラップ設定
+   - プロンプトテンプレート
 
 ## トラブルシューティング
 
-1. OpenAI API エラー:
+1. インポートエラー:
+   - 仮想環境が有効化されているか確認
+   - `pip install -e .` が正常に完了しているか確認
+   - PYTHONPATH が正しく設定されているか確認
+
+2. OpenAI API エラー:
    - API キーが正しく設定されているか確認
-   - 環境変数が適切に読み込まれているか確認
+   - `.env` ファイルが正しい場所にあるか確認
+   - 環境変数が読み込まれているか確認
 
-2. ドキュメント読み込みエラー:
-   - ファイルパスが正しく設定されているか確認
+3. ドキュメント読み込みエラー:
+   - `DOCS_PATH` が正しく設定されているか確認
+   - 指定ディレクトリのアクセス権限を確認
    - ファイルのエンコーディングを確認
-   - アクセス権限を確認
 
-3. メモリエラー:
-   - チャンクサイズの調整を検討
-   - 処理対象ドキュメントの量を確認
+4. メモリ関連の問題:
+   - チャンクサイズの調整
+   - 処理対象ドキュメント数の確認
+   - システムリソースの確認
 
-## 貢献方法
+## ライセンスと謝辞
 
-1. このリポジトリをフォーク
-2. 新しい機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチをプッシュ (`git push origin feature/amazing-feature`)
-5. プルリクエストを作成
-
-## ライセンス
-
-このプロジェクトは MIT ライセンスの下で公開されています。
+- MIT ライセンスで公開（詳細は [LICENSE](LICENSE) を参照）
+- OpenAI GPTモデル使用
+- LangChain フレームワーク活用
 
 ## サポートと連絡先
 
-- Issue Tracker: https://github.com/Yulikepython/ai-assistant-hub/issues
-- メール: developer@itc.tokyo
-
-## 謝辞
-
-- OpenAI - GPTモデルの提供
-- LangChain - フレームワークの提供
-- すべてのコントリビューター
+- バグ報告: [Issue Tracker](https://github.com/Yulikepython/ai-assistant-hub/issues)
+- 連絡先: developer@itc.tokyo
