@@ -2,7 +2,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 import os
 from typing import Optional
 
-from config import EnvironmentalVariable as Ev
+from src.config import EnvironmentalVariable as Ev
 
 
 def check_environment() -> tuple[bool, Optional[str]]:
@@ -13,7 +13,7 @@ def check_environment() -> tuple[bool, Optional[str]]:
     return True, None
 
 
-def test_chat_completion(model) -> tuple[bool, Optional[str]]:
+def check_chat_completion(model) -> tuple[bool, Optional[str]]:  # test_chat_completion から名前を変更
     """ChatGPTの基本機能テスト"""
     try:
         messages = [
@@ -39,7 +39,7 @@ def run_health_check(model) -> bool:
         print(f"   {env_message}")
 
     # Chat機能チェック
-    chat_ok, chat_message = test_chat_completion(model)
+    chat_ok, chat_message = check_chat_completion(model)  # 関数名の変更をここでも反映
     print(f"\n2. Chat完了機能チェック: {'✓' if chat_ok else '✗'}")
     if chat_message:
         print(f"   テスト応答: {chat_message}")

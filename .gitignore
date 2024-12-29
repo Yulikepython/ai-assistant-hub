@@ -1,0 +1,24 @@
+# Python関連
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.env
+
+# テスト関連
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# IDE関連
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ドキュメント関連
+docs/*
+!docs/default/

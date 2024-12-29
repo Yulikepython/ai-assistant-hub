@@ -3,10 +3,10 @@ from langchain_openai import ChatOpenAI
 import os
 import asyncio
 
-from config import EnvironmentalVariable as Ev
-from config import OpenAIModel as Om
-from document_processor import create_document_processor
-from health_check import run_health_check
+from src.config import EnvironmentalVariable as Ev  # この行を修正
+from src.config import OpenAIModel as Om  # この行を修正
+from src.document_processor import create_document_processor  # この行を修正
+from src.health_check import run_health_check  # この行を修正
 
 # Envの読み込み
 ENV_PATH = os.path.join(os.path.dirname(__file__), ".env")
@@ -14,8 +14,8 @@ load_dotenv(ENV_PATH)
 
 # 環境変数の値を取得
 OpenAI_KEY = os.getenv(Ev.OPENAI_API_KEY.name)
-DOCS_PATH = os.getenv(Ev.DOCS_PATH.name)
 
+# ★以下の設定は適宜変更してください★
 # モデルの設定
 MODEL_NAME = Om.gpt_4o.value
 
@@ -24,9 +24,10 @@ DOCS_DIR = "default"
 
 def get_docs_full_path() -> str:
     """ドキュメントの完全パスを取得"""
-    if not DOCS_PATH:
+    docs_path = os.getenv(Ev.DOCS_PATH.name)
+    if not docs_path:
         raise ValueError("DOCS_PATH が環境変数に設定されていません")
-    return os.path.join(DOCS_PATH, DOCS_DIR)
+    return os.path.join(docs_path, DOCS_DIR)
 
 def create_chat_model():
     """ChatOpenAIモデルのインスタンスを作成"""
