@@ -43,17 +43,20 @@ pip install -e .  # 開発モードでプロジェクトをインストール
 OPENAI_API_KEY=your_api_key_here
 DOCS_PATH=/path/to/your/documents
 ```
+★重要★ **DOCS_PATHはcloneした環境内のdocsディレクトリを指定してください。**
+
+コマンドにより読み取るディレクトリは、この中に設置します。（デフォルトでは、"default"がサンプルとして入っています。）
 
 5. アプリケーション設定の確認:
 `src/user_config.py` で使用するモデルとドキュメントディレクトリを設定できます:
 ```python
-from config import OpenAIModel
+from src.config import OpenAIModel
 
 # 使用するOpenAIのモデル
 MODEL_NAME = OpenAIModel.gpt_4o.value  # または OpenAIModel.o1.value
 
 # RAGで使用するドキュメントディレクトリ名
-DOCS_DIR = "your_docs_directory"  # docs/ 以下に作成されるディレクトリ名
+DOCS_DIR = "your_docs_directory"  # docs/ 以下に作成した実際に読み取るファイルが入っているディレクトリ名
 ```
 
 ## 使用方法
@@ -76,6 +79,18 @@ ai-assistant
 3. 対話型インターフェースが起動します
    - 質問を入力してEnterキーを押してください
    - 終了するには 'q' を入力してください
+
+"default"ディレクトリを指定している場合、以下の質問を入力することで、正しくファイルが読み取れているかを書くにできます。
+```text
+各ファイルの秘密キーを抜き出してください。
+```
+以下のような回答が得られれば、正しくファイルは読み取れています。
+```text
+- **テキストファイルの秘密キーワード**: 「test-itc-api-assistant-txt-file-key」
+- **Markdownファイルの秘密キーワード**: 「test-secret-keyword-for-md-file」
+
+```
+生成AIで動的に回答が作られているため、多少文面等には違いがあるかもしれませんが、秘密キーワードが含まれていることを確認してください。
 
 ## プロジェクト構造
 
