@@ -32,13 +32,13 @@ def create_chat_model():
 async def interactive_qa(processor):
     """対話型Q&A sessionを実行"""
     while True:
-        question = input("\n質問を入力してください（終了する場合は 'q' を入力）: ")
+        question = input("\n★ 質問を入力してください（終了する場合は 'q' を入力）: ") #ターミナル上で質問を見つけやすく
         if question.lower() == 'q':
             break
 
         try:
             answer = await processor.ask_question(question)
-            print(f"\n回答: {answer}")
+            print(f"\n★★ 回答: {answer}") #ターミナル上で質問を見つけやすく
         except Exception as e:
             print(f"エラーが発生しました: {str(e)}")
 
